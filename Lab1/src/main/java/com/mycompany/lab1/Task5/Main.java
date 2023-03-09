@@ -12,10 +12,10 @@ public class Main {
 
     public static void main(String[] args) {
         Agent agent = new Agent();
-        Thread plus = new Thread(new SymbolThread(true, '+', agent));
-        Thread minus = new Thread(new SymbolThread(false, '|', agent));
-//        Thread plus = new Thread(new SymbolThread(true, '+'));
-//        Thread minus = new Thread(new SymbolThread(false, '|'));
+        SymbolThread plus = new SymbolThread(true, '+', agent);
+        SymbolThread minus = new SymbolThread(false, '|', agent);
+//        SymbolThread plus = new SymbolThread(true, '+');
+//        SymbolThread minus = new SymbolThread(false, '|');
         plus.start();
         minus.start();
     }

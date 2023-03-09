@@ -8,7 +8,7 @@ package com.mycompany.lab1.Task5;
  *
  * @author Назар
  */
-public class SymbolThread implements Runnable {
+public class SymbolThread extends Thread {
 
     private boolean flag;
     private char symbol;
