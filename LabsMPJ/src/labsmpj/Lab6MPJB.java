@@ -1,14 +1,14 @@
 
-import java.util.Arrays;
 import mpi.*;
 
-public class Lab6MPJ {
+public class Lab6MPJB {
 
-    static final int NRA = 10;
+    static final int N = 10;
+    static final int NRA = N;
     /* number of rows in matrix A */
-    static final int NCA = 2;
+    static final int NCA = N;
     /* number of columns in matrix A */
-    static final int NCB = 5;
+    static final int NCB = N;
     /* number of columns in matrix B */
     static final int MASTER = 0;
     /* taskid of first task */
@@ -43,27 +43,31 @@ public class Lab6MPJ {
             //System.out.println("mpi_mm has started with " + numtasks + " tasks.");
             for (i = 0; i < NRA; i++) {
                 for (j = 0; j < NCA; j++) {
-                    a[i][j] = i * 10 + j;//10;
+                    a[i][j] = 1;//i * 10 + j;//10;
                 }
             }
             for (i = 0; i < NCA; i++) {
                 for (j = 0; j < NCB; j++) {
-                    b[i][j] = -(i * 10 + j);//10;
+                    b[i][j] = 1;//-(i * 10 + j);//10;
                 }
             }
-            
-            Functions.PrintMatr(a, NRA, NCA, "The A matrix: ");
-            Functions.PrintMatr(b, NCA, NCB, "The B matrix: ");
-            
+
+            //Functions.PrintMatr(a, NRA, NCA, "The A matrix: ");
+            //Functions.PrintMatr(b, NCA, NCB, "The B matrix: ");
+            // Start time
+            long startTime = System.nanoTime();
+
             averow = NRA / numworkers;
             extra = NRA % numworkers;
             offset = 0;
             for (dest = 1; dest <= numworkers; dest++) {
                 rows = (dest <= extra) ? averow + 1 : averow;
+                a_arr = Functions.ToArr(a);
+                b_arr = Functions.ToArr(b);
                 MPI.COMM_WORLD.Send(new int[]{offset}, 0, 1, MPI.INT, dest, FROM_MASTER);
                 MPI.COMM_WORLD.Send(new int[]{rows}, 0, 1, MPI.INT, dest, FROM_MASTER);
-                MPI.COMM_WORLD.Send(Functions.ToArr(a), offset * NCA, rows * NCA, MPI.DOUBLE, dest, FROM_MASTER);
-                MPI.COMM_WORLD.Send(Functions.ToArr(b), 0, NCA * NCB, MPI.DOUBLE, dest, FROM_MASTER);
+                MPI.COMM_WORLD.Send(a_arr, offset * NCA, rows * NCA, MPI.DOUBLE, dest, FROM_MASTER);
+                MPI.COMM_WORLD.Send(b_arr, 0, NCA * NCB, MPI.DOUBLE, dest, FROM_MASTER);
                 offset += rows;
             }
             /* Receive results from worker tasks */
@@ -74,11 +78,17 @@ public class Lab6MPJ {
                 rows = rows_mass[0];
                 MPI.COMM_WORLD.Recv(c_arr, offset * NCB, rows * NCB, MPI.DOUBLE, source, FROM_WORKER);
             }
+            // End time
+            long endTime = System.nanoTime();
             /* Print results */
-            System.out.println("********");
+            //System.out.println("********");
             c = Functions.ToMatr(c_arr, NRA, NCB, 0);
-            Functions.PrintMatr(c, NRA, NCB, "The result matrix:");
+            //Functions.PrintMatr(c, NRA, NCB, "The result matrix:");
             System.out.println("********");
+
+            long totalTime = endTime - startTime;
+            System.out.println("Time: " + totalTime + " nanoseconds.");
+
             System.out.println("Done.");
         } else {
             /* if (taskid > MASTER)*/
@@ -86,6 +96,7 @@ public class Lab6MPJ {
             offset = offset_mass[0];
             MPI.COMM_WORLD.Recv(rows_mass, 0, 1, MPI.INT, MASTER, FROM_MASTER);
             rows = rows_mass[0];
+
             MPI.COMM_WORLD.Recv(a_arr, 0, rows * NCA, MPI.DOUBLE, MASTER, FROM_MASTER);
             a = Functions.ToMatr(a_arr, rows, NCA, 0);
             MPI.COMM_WORLD.Recv(b_arr, 0, NCA * NCB, MPI.DOUBLE, MASTER, FROM_MASTER);
@@ -101,7 +112,6 @@ public class Lab6MPJ {
             }
 
             //Functions.PrintMatr(c, rows, NCB, taskid);
-
             MPI.COMM_WORLD.Send(new int[]{offset}, 0, 1, MPI.INT, MASTER, FROM_WORKER);
             MPI.COMM_WORLD.Send(new int[]{rows}, 0, 1, MPI.INT, MASTER, FROM_WORKER);
             MPI.COMM_WORLD.Send(Functions.ToArr(c), 0, rows * NCB, MPI.DOUBLE, MASTER, FROM_WORKER);
