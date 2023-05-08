@@ -16,3 +16,6 @@ LabsMPJ/build.xml
 LabsMPJ/manifest.mf
 
 *.class
+
+LabsMPJ/src/labsmpj/MKR.java
+/Lab3/target/
