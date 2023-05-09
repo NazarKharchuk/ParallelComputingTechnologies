@@ -13,11 +13,9 @@ import java.util.HashMap;
  */
 public class Journal {
 
-    public int countMarks;
     public HashMap<Group, HashMap<Student, ArrayList<Integer>>> journal = new HashMap<>();
 
     public Journal(ArrayList<Group> groups) {
-        this.countMarks = 0;
         for (Group g : groups) {
             HashMap<Student, ArrayList<Integer>> marks = new HashMap<>();
             for (Student s : g.students) {
@@ -33,8 +31,6 @@ public class Journal {
 
         synchronized (studentMarks) {
             studentMarks.add(mark);
-            //groupMarks.put(s, studentMarks);
-            countMarks++;
         }
     }
 
