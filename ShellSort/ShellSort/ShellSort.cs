@@ -1,84 +1,40 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace ShellSort
 {
-    class ShellSort
+    public class ShellSort<T> where T : IComparable<T>
     {
-        static void Main(string[] args)
+        // Змінна, на яку буде ділитись значення кроку d
+        readonly int step_divider;
+
+        // Конструктор
+        public ShellSort(int step_divider)
         {
-            // Генеруємо масив випадкових чисел розміром size
-            int size = 100;
-            Console.WriteLine("Array size:" + size);
-            int[] array = GenerateArray(size);
-
-            // Створюємо копії згенерованого масиву, щоб посортувати їх різними методами алгоритму Шелла
-            int[] array_s = new int[array.Length];
-            Array.Copy(array, array_s, array.Length);
-
-            int[] array_p = new int[array.Length];
-            Array.Copy(array, array_p, array.Length);
-
-            // Виводимо несортований масив
-            Console.WriteLine("Unsorted array:");
-            PrintArray(array);
-
-            // Вимірюємо час виконання послідовного алгоритму Шелла
-            Stopwatch stopwatch_s = new Stopwatch();
-            stopwatch_s.Start();
-            // Сортуємо масив послідовним алгоритмом Шелла
-            SequentialShellSort(array_s);
-            stopwatch_s.Stop();
-
-            // Виводимо відсортований послідовним алгоритмом Шелла масив
-            Console.WriteLine("Sorted array (Sequential):");
-            PrintArray(array_s);
-
-            // Вимірюємо час виконання паралельного алгоритму Шелла
-            Stopwatch stopwatch_p = new Stopwatch();
-            stopwatch_p.Start();
-            // Сортуємо масив паралельним алгоритмом Шелла
-            ParallelShellSort(array_p);
-            stopwatch_p.Stop();
-
-            // Виводимо відсортований паралельним алгоритмом Шелла масив
-            Console.WriteLine("Sorted array (Parallel):");
-            PrintArray(array_p);
-
-            // Перевіряємо, чи ідентичні масиви, посортовані різними методами алгоритму Шелла
-            Console.WriteLine("Identical sorted arrays: " + array_s.SequenceEqual(array_p));
-
-            // Сортуємо вхідний масив вбудованими засобами, щоб перевірити коректність сортування
-            Array.Sort(array);
-            // Перевіряємо, чи правильно відсортовані масиви
-            Console.WriteLine("Correctly sorted: " + array.SequenceEqual(array_p));
-
-            // Виводимо час виконання послідовного алгоритму Шелла
-            Console.WriteLine("Sequential shell sort time: " + stopwatch_s.Elapsed.TotalSeconds);
-
-            // Виводимо час виконання паралельного алгоритму Шелла
-            Console.WriteLine("Parallel shell sort time: " + stopwatch_p.Elapsed.TotalSeconds);
-
-            // Виводимо прискорення паралельного алгоритму, порівняно з послідовним
-            Console.WriteLine("Speed up: " + stopwatch_s.Elapsed.TotalSeconds / stopwatch_p.Elapsed.TotalSeconds);
+            this.step_divider = step_divider;
         }
 
-        static void SequentialShellSort(int[] array)
+        // Послідовний алгоритм сортування Шелла
+        public void SequentialShellSort(T[] array)
         {
             // Зберігаємо довжину масиву в змінній
             int length = array.Length;
             // Визначаємо величину кроку (відстань між елементами, що потівнюються)
-            var d = length / 2;
+            int d = 1;
+            while (d < length / step_divider)
+            {
+                d = step_divider * d + 1;
+            }
 
             // Починаємо сортування з кроку d і зменшуємо його до 1
             while (d >= 1)
             {
                 // Проходження масиву з кроком d
-                for(int i = 0; i < d; i++ ){
+                for (int i = 0; i < d; i++)
+                {
                     // Змінна для зберігання елемента при перестановці елементів
-                    int key;
+                    T key;
                     // Змінна, що зберігатиме індекс елемента, що порівнюється
                     int k;
 
@@ -89,7 +45,7 @@ namespace ShellSort
                         k = j - d;
 
                         // Перестановка елемента на його місце в підмасиві
-                        while (k >= 0 && array[k] > key)
+                        while (k >= 0 && array[k].CompareTo(key) > 0)
                         {
                             // Перестановка елементів
                             array[k + d] = array[k];
@@ -100,16 +56,21 @@ namespace ShellSort
                 };
 
                 // Зменшуємо крок для наступної ітерації
-                d /= 2;
+                d /= step_divider;
             }
         }
 
-        static void ParallelShellSort(int[] array)
+        // Паралельний алгоритм сортування Шелла
+        public void ParallelShellSort(T[] array)
         {
             // Зберігаємо довжину масиву в змінній
             int length = array.Length;
             // Визначаємо величину кроку (відстань між елементами, що потівнюються)
-            var d = length / 2;
+            int d = 1;
+            while (d < length / step_divider)
+            {
+                d = step_divider * d + 1;
+            }
 
             // Починаємо сортування з кроку d і зменшуємо його до 1
             while (d >= 1)
@@ -118,7 +79,7 @@ namespace ShellSort
                 Parallel.For(0, d, i =>
                 {
                     // Змінна для зберігання елемента при перестановці елементів
-                    int key;
+                    T key;
                     // Змінна, що зберігатиме індекс елемента, що порівнюється
                     int k;
 
@@ -129,7 +90,7 @@ namespace ShellSort
                         k = j - d;
 
                         // Перестановка елемента на його місце в підмасиві
-                        while (k >= 0 && array[k] > key)
+                        while (k >= 0 && array[k].CompareTo(key) > 0)
                         {
                             // Перестановка елементів
                             array[k + d] = array[k];
@@ -140,32 +101,8 @@ namespace ShellSort
                 });
 
                 // Зменшуємо крок для наступної ітерації
-                d /= 2;
+                d /= step_divider;
             }
-        }
-
-        // Створення масиву цілих чисел та заповнення його випадковими значеннями
-        static int[] GenerateArray(int size)
-        {
-            Random random = new Random();
-            int[] array = new int[size];
-
-            for (int i = 0; i < size; i++)
-            {
-                array[i] = random.Next(100000);
-            }
-
-            return array;
-        }
-
-        // Виведення масиву в консоль
-        static void PrintArray(int[] array)
-        {
-            for (int i = 0; i < array.Length; i++)
-            {
-                Console.Write(array[i] + " ");
-            }
-            Console.WriteLine();
         }
     }
 }

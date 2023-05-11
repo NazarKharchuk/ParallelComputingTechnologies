@@ -44,3 +44,5 @@ ShellSort/ShellSort/bin/Debug/net5.0/
 *.sln
 
 *.csproj
+
+ShellSort/.vs/ShellSort/DesignTimeBuild/
