@@ -22,10 +22,7 @@ namespace ShellSort
             int length = array.Length;
             // Визначаємо величину кроку (відстань між елементами, що потівнюються)
             int d = 1;
-            while (d < length / step_divider)
-            {
-                d = step_divider * d + 1;
-            }
+            while (d < length / step_divider) d = step_divider * d + 1;
 
             // Починаємо сортування з кроку d і зменшуємо його до 1
             while (d >= 1)
@@ -67,10 +64,7 @@ namespace ShellSort
             int length = array.Length;
             // Визначаємо величину кроку (відстань між елементами, що потівнюються)
             int d = 1;
-            while (d < length / step_divider)
-            {
-                d = step_divider * d + 1;
-            }
+            while (d < length / step_divider) d = step_divider * d + 1;
 
             // Починаємо сортування з кроку d і зменшуємо його до 1
             while (d >= 1)
