@@ -2,10 +2,10 @@
 
 namespace ShellSort
 {
-    // Клас ComparableType, що містить метод CompareTo
+    // Клас ComparableType, що реалізує метод CompareTo
     public class ComparableType : IComparable<ComparableType>
     {
-        // Чіле число - Id
+        // Ціле число - Id
         public int Id { get; set; }
         // Рядкове значення - Name
         public string Name { get; set; }

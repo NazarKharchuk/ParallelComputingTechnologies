@@ -9,7 +9,7 @@ namespace ShellSort
         static void Main(string[] args)
         {
             // Змінна, що зберігає розмір масиву
-            int size = 10;
+            int size = 1000000;
             // Змінна, на яку буде ділитись значення кроку d
             int step_divider = 2;
 
