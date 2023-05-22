@@ -46,3 +46,7 @@ ShellSort/ShellSort/bin/Debug/net5.0/
 *.csproj
 
 ShellSort/.vs/ShellSort/DesignTimeBuild/
+/Lab4/target/
+/Lab4/NewFolder/
+
+Lab4/src/main/java/Example/
