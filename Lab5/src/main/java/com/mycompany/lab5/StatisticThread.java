@@ -17,13 +17,15 @@ public class StatisticThread extends Thread {
     private int count;
     private int queueSizeSum;
     private final boolean showStatistic;
+    private final int imitationNumber;
 
-    public StatisticThread(Queue queue, long timeInterval, boolean showStatistic) {
+    public StatisticThread(Queue queue, long timeInterval, boolean showStatistic, int imitationNumber) {
         this.queue = queue;
         this.timeInterval = timeInterval;
         count = 0;
         queueSizeSum = 0;
         this.showStatistic = showStatistic;
+        this.imitationNumber = imitationNumber;
     }
 
     public int getIterationCount() {
@@ -43,17 +45,19 @@ public class StatisticThread extends Thread {
                 queueSizeSum += queue.getQueueCount();
 
                 if (showStatistic) {
-                    System.out.println("\n\tTime: " + LocalTime.now() + ";");
-                    System.out.println("Added count: " + queue.getAddedCount() + ";");
-                    System.out.println("Rejection count: " + queue.getRejectionCount() + ";");
+                    String statisticStr = "\n\t\tStatistic in imitation #" + imitationNumber;
+                    statisticStr += "\n\tTime: " + LocalTime.now() + ";";
+                    statisticStr += "\nAdded count: " + queue.getAddedCount() + ";";
+                    statisticStr += "\nRejection count: " + queue.getRejectionCount() + ";";
 
-                    System.out.println("\tRejected/Added: " + ((float) queue.getRejectionCount() / queue.getAddedCount()) + "; ");
-                    System.out.println("\nAverage queue size: " + ((float) queueSizeSum / count) + ";");
+                    statisticStr += "\n\tRejected/Added: " + ((float) queue.getRejectionCount() / queue.getAddedCount()) + "; ";
+                    statisticStr += "\n\tAverage queue size: " + ((float) queueSizeSum / count) + ";";
+                    System.out.println(statisticStr);
                 }
             }
         } catch (InterruptedException e) {
             if (showStatistic) {
-                System.out.println("Stopped statistics");
+                System.out.println("\nStopped statistics of imitation #" + imitationNumber);
             }
         }
     }

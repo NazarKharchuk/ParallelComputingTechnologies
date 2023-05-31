@@ -16,17 +16,23 @@ import java.util.concurrent.Future;
 public class Lab5 {
 
     public static void main(String[] args) throws InterruptedException, ExecutionException {
-        int imitationCount = 2;
+        int imitationCount = 4;
 
         ExecutorService executor = Executors.newFixedThreadPool(imitationCount);
 
         ArrayList<Future<ArrayList<Float>>> statisticArrays = new ArrayList<>();
 
-        RunImitation runImitation1 = new RunImitation(false, true);
+        RunImitation runImitation1 = new RunImitation(true, true, 1);
         statisticArrays.add(executor.submit(runImitation1));
 
-        RunImitation runImitation2 = new RunImitation(false, true);
+        RunImitation runImitation2 = new RunImitation(true, true, 2);
         statisticArrays.add(executor.submit(runImitation2));
+
+        RunImitation runImitation3 = new RunImitation(true, true, 3);
+        statisticArrays.add(executor.submit(runImitation3));
+
+        RunImitation runImitation4 = new RunImitation(true, true, 4);
+        statisticArrays.add(executor.submit(runImitation4));
 
         executor.shutdown();
 
@@ -41,7 +47,8 @@ public class Lab5 {
             }
         }
 
-        System.out.println("\nAverage average queue size: " + (averageQueueSize / imitationCount) + ";");
+        System.out.println("\n\t\tFinal result:");
+        System.out.println("\tAverage average queue size: " + (averageQueueSize / imitationCount) + ";");
         System.out.println("\tAverage failure probabilities: " + (averageFailureProbabilities / imitationCount) + "; ");
     }
 }

@@ -19,22 +19,24 @@ public class RunImitation implements Callable<ArrayList<Float>> {
 
     private final boolean showStatistic;
     private final boolean showResult;
+    private final int imitationNumber;
 
-    public RunImitation(boolean showStatistic, boolean showResult) {
+    public RunImitation(boolean showStatistic, boolean showResult, int imitationNumber) {
         this.showStatistic = showStatistic;
         this.showResult = showResult;
+        this.imitationNumber = imitationNumber;
     }
 
     @Override
     public ArrayList<Float> call() {
         try {
-            int numChannels = 2;
-            int queueCapacity = 5;
+            int numChannels = 5;
+            int queueCapacity = 20;
 
             double addingMean = 10.0;
-            double processingMean = 120.0;
+            double processingMean = 80.0;
 
-            long timeInterval = 200;
+            long timeInterval = 500;
 
             ExecutorService executor = Executors.newFixedThreadPool(numChannels + 1);
             Queue queue = new Queue(queueCapacity);
@@ -48,7 +50,7 @@ public class RunImitation implements Callable<ArrayList<Float>> {
                 executor.execute(processingTasks[i]);
             }
 
-            StatisticThread statisticThread = new StatisticThread(queue, timeInterval, showStatistic);
+            StatisticThread statisticThread = new StatisticThread(queue, timeInterval, showStatistic, imitationNumber);
             statisticThread.start();
 
             Thread.sleep(5000);
@@ -74,12 +76,14 @@ public class RunImitation implements Callable<ArrayList<Float>> {
             int rejectionCount = queue.getRejectionCount();
 
             if (showResult) {
-                System.out.println("\nAverage queue size" + ((float) queueSizeSum / count) + ";");
-                System.out.println("\nAdded count: " + addedCount + ";");
-                System.out.println("Rejection count: " + rejectionCount + ";");
-                System.out.println("Processed count: " + processedCount + ";");
-                System.out.println("Queue count: " + queue.getQueueCount() + ";");
-                System.out.println("\tRejected/Added: " + ((float) rejectionCount / addedCount) + "; ");
+                String resultStr = "\n\t\tResult of imitation #" + imitationNumber;
+                resultStr += "\nAdded count: " + addedCount + ";";
+                resultStr += "\nRejection count: " + rejectionCount + ";";
+                resultStr += "\nProcessed count: " + processedCount + ";";
+                resultStr += "\nQueue count: " + queue.getQueueCount() + ";";
+                resultStr += "\n\tAverage queue size: " + ((float) queueSizeSum / count) + ";";
+                resultStr += "\n\tRejected/Added: " + ((float) rejectionCount / addedCount) + "; ";
+                System.out.println(resultStr);
             }
 
             ArrayList<Float> statisticArray = new ArrayList<>();

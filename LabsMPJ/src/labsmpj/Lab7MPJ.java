@@ -3,7 +3,7 @@ import mpi.*;
 
 public class Lab7MPJ {
 
-    static final int N = 500;
+    static final int N = 2000;
     static final int NRA = N;
     /* number of rows in matrix A */
     static final int NCA = N;
@@ -22,6 +22,7 @@ public class Lab7MPJ {
         double[] a_arr, /* matrix A to be multiplied */
                 b_arr, /* matrix B to be multiplied */
                 c_arr;
+        boolean isOneToMany = true;
         /* result matrix C */
         int[] portions, offsets;
         int portionSize;
@@ -33,8 +34,6 @@ public class Lab7MPJ {
         taskid = MPI.COMM_WORLD.Rank();
         portions = new int[numtasks];
         offsets = new int[numtasks];
-        portions[0] = 0;
-        offsets[0] = 0;
 
         averow = NRA / numtasks;
         extra = NRA % numtasks;
@@ -61,6 +60,11 @@ public class Lab7MPJ {
             //Functions.PrintMatr(a, NRA, NCA, "The A matrix: ");
             //Functions.PrintMatr(b, NCA, NCB, "The B matrix: ");
             // Start time
+            if (isOneToMany) {
+                System.out.println("Collective (1:M). Size: " + N);
+            } else {
+                System.out.println("Collective (M:M). Size: " + N);
+            }
             startTime = System.nanoTime();
 
         }
@@ -93,7 +97,7 @@ public class Lab7MPJ {
         //Functions.PrintMatr(c, portionSize / NCA, NCB, ("res mat in " + taskid));
         c_arr = Functions.ToArr(c);
 
-        if (true) {
+        if (isOneToMany) {
             MPI.COMM_WORLD.Gatherv(c_arr, 0, portionSize, MPI.DOUBLE,
                     c_arr, 0, portions, offsets, MPI.DOUBLE, MASTER);
         } else {

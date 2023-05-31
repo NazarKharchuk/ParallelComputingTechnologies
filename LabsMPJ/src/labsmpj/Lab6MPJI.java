@@ -55,17 +55,18 @@ public class Lab6MPJI {
             //Functions.PrintMatr(a, NRA, NCA, "The A matrix: ");
             //Functions.PrintMatr(b, NCA, NCB, "The B matrix: ");
             // Start time
+            System.out.println("Non-blocking. Size: " + N);
             long startTime = System.nanoTime();
 
             averow = NRA / numworkers;
             extra = NRA % numworkers;
             offset = 0;
+            a_arr = Functions.ToArr(a);
+            b_arr = Functions.ToArr(b);
             for (dest = 1; dest <= numworkers; dest++) {
-                b_arr = Functions.ToArr(b);
                 var isend4 = MPI.COMM_WORLD.Isend(b_arr, 0, NCA * NCB, MPI.DOUBLE, dest, FROM_MASTER);
                 rows = (dest <= extra) ? averow + 1 : averow;
                 var isend2 = MPI.COMM_WORLD.Isend(new int[]{rows}, 0, 1, MPI.INT, dest, FROM_MASTER);
-                a_arr = Functions.ToArr(a);
                 var isend3 = MPI.COMM_WORLD.Isend(a_arr, offset * NCA, rows * NCA, MPI.DOUBLE, dest, FROM_MASTER);
                 var isend1 = MPI.COMM_WORLD.Isend(new int[]{offset}, 0, 1, MPI.INT, dest, FROM_MASTER);
                 offset += rows;
@@ -89,9 +90,9 @@ public class Lab6MPJI {
             long endTime = System.nanoTime();
             /* Print results */
             //System.out.println("********");
-            c = Functions.ToMatr(c_arr, NRA, NCB, 0);
+            //c = Functions.ToMatr(c_arr, NRA, NCB, 0);
             //Functions.PrintMatr(c, NRA, NCB, "The result matrix:");
-            System.out.println("********");
+            //System.out.println("********");
 
             long totalTime = endTime - startTime;
             System.out.println("Time: " + totalTime + " nanoseconds.");
