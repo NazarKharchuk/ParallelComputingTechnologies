@@ -25,10 +25,11 @@ public class Lab2 {
         secondMatrix.setTheSameValue(1);
 
         /*System.out.println("First matrix:");
-        firstMatrix.print();*/
+        firstMatrix.print();
 
- /*System.out.println("Second matrix");
+        System.out.println("Second matrix");
         secondMatrix.print();*/
+        
         var stripeMultiplication = new StripeMultiplication(firstMatrix, secondMatrix);
         stripeMultiplication.runStripeMultiplication(numThreads);
         var stripeResult = stripeMultiplication.getResult();
@@ -36,7 +37,7 @@ public class Lab2 {
         var foxMultiplication = new FoxMultiplication(firstMatrix, secondMatrix);
         foxMultiplication.runFoxMultiplication(numThreads);
         var foxResult = foxMultiplication.getResult();
-
+        
         var coorrectResult = firstMatrix.multiply(secondMatrix);
 
         stripeResult.printResult("Stripe", coorrectResult, false);

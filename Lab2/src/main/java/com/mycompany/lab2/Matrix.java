@@ -58,7 +58,7 @@ public class Matrix {
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                this.setElement(i, j, (i * 10 + j));//(i * 10 + j));
+                this.setElement(i, j, value);//(i * 10 + j));
             }
         }
     }
